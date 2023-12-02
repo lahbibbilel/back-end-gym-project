@@ -192,6 +192,22 @@ app.put("/user/:id", async (req, res) => {
   }
 });
 
+app.delete("/user/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedUser = await User.findByIdAndDelete(id);
+
+    if (!deletedUser) {
+      return res.status(404).json({ message: `User with ID ${id} not found` });
+    }
+
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 app.post("/user", async (req, res) => {
   try {
     const newUser = await User.create(req.body); // Correct the variable name to User
@@ -199,6 +215,22 @@ app.post("/user", async (req, res) => {
     res.status(200).json(newUser);
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+//product module
+
+app.put("/product/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const putProduct = await Product.findByIdAndUpdate(id, req.body);
+    if (!putProduct) {
+      return res.status(404).json({ message: `cannot find id + ${id}` });
+    }
+    const updateProduct = await Product.findById(id);
+    res.status(200).json(putProduct);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -222,7 +254,7 @@ app.get("/product", async (req, res) => {
   }
 });
 
-app.get("/:productId", async (req, res) => {
+app.get("/product/:productId", async (req, res) => {
   try {
     const productId = req.params.productId;
     const product = await Product.findById(productId); // Utilisation de Mongoose pour trouver un produit par son ID
@@ -237,6 +269,24 @@ app.get("/:productId", async (req, res) => {
   }
 });
 
+app.delete("/product/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      return res
+        .status(404)
+        .json({ message: `Product with ID ${id} not found` });
+    }
+
+    res.status(200).json({ message: "Product deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
 //panier
 
 app.post("/panel", async (req, res) => {
@@ -245,6 +295,72 @@ app.post("/panel", async (req, res) => {
     res.status(200).json(newPanier);
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get("/panel/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const panier = await Panier.findById(id);
+
+    if (!panier) {
+      return res
+        .status(404)
+        .json({ message: `Panier with ID ${id} not found` });
+    }
+
+    res.status(200).json(panier);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.put("/panel/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body; // Données à mettre à jour
+
+    const updatedPanier = await Panier.findByIdAndUpdate(id, updatedData, {
+      new: true, // Pour obtenir le panier mis à jour après la modification
+    });
+
+    if (!updatedPanier) {
+      return res
+        .status(404)
+        .json({ message: `Panier with ID ${id} not found` });
+    }
+
+    res.status(200).json(updatedPanier);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.delete("/panel/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedPanel = await Panier.findByIdAndDelete(id);
+
+    if (!deletedPanel) {
+      return res.status(404).json({ message: `Panel with ID ${id} not found` });
+    }
+
+    res.status(200).json({ message: "Panel deleted successfully" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+app.get("/panel", async (req, res) => {
+  try {
+    const getpanel = await Panier.find({});
+    res.status(200).json(getpanel);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ message: error.message });
   }
 });

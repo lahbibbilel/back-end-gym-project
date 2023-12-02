@@ -22,6 +22,10 @@ const userShema = mongoose.Schema({
     type: String,
     required: [true, "enter your password"],
   },
+  role: {
+    type: String,
+    default: "USER", // Set the default role to "USER"
+  },
   authTokens: [
     {
       authToken: {
